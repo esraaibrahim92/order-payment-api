@@ -44,7 +44,7 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-        /**
+    /**
      * Get the identifier that will be stored in the JWT subject claim.
      */
     public function getJWTIdentifier(): mixed

@@ -6,6 +6,5 @@ use App\Domain\Order\Entities\Order;
 
 interface OrderRepositoryInterface
 {
-    public function find(int $id): Order;
-    public function create(array $items): Order;
+    public function save(Order $order, array $customer): Order;
 }

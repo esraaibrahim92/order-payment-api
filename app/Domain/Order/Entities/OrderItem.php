@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Domain\Order\Entities;
+
+final class OrderItem
+{
+    public function __construct(
+        public string $productName,
+        public int $quantity,
+        public float $price
+    ) {
+    }
+
+    public function subtotal(): float
+    {
+        return $this->quantity * $this->price;
+    }
+}

@@ -5,11 +5,22 @@ use App\Domain\Order\Enums\OrderStatus;
 
 final class Order
 {
+    /**
+     * @param OrderItem[] $items
+     */
     public function __construct(
-        public int $id,
-        public float $total,
+        public array $items,
         public OrderStatus $status
     ) {
+    }
+
+    public function total(): float
+    {
+        return array_reduce(
+            $this->items,
+            fn (float $sum, OrderItem $item) => $sum + $item->subtotal(),
+            0.0
+        );
     }
 
     public function canBePaid(): bool

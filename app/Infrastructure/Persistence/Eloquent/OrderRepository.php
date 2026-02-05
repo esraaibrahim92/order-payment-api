@@ -5,33 +5,28 @@ use App\Domain\Order\Entities\Order as DomainOrder;
 use App\Domain\Order\Enums\OrderStatus;
 use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use App\Models\Order;
+use App\Models\OrderItem;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
-    public function find(int $id): DomainOrder
+    public function save(DomainOrder $order, array $customer): DomainOrder
     {
-        $order = Order::findOrFail($id);
-
-        return new DomainOrder(
-            $order->id,
-            (float) $order->total,
-            OrderStatus::from($order->status)
-        );
-    }
-
-    public function create(array $items): DomainOrder
-    {
-        $total = collect($items)->sum(fn ($i) => $i['price'] * $i['quantity']);
-
-        $order = Order::create([
-            'total' => $total,
-            'status' => OrderStatus::PENDING->value,
+        $model = Order::create([
+            'customer_name' => $customer['name'],
+            'customer_email' => $customer['email'],
+            'total' => $order->total(),
+            'status' => $order->status->value,
         ]);
 
-        return new DomainOrder(
-            $order->id,
-            $order->total,
-            OrderStatus::PENDING
-        );
+        foreach ($order->items as $item) {
+            OrderItem::create([
+                'order_id'    => $model->id,
+                'product_name'=> $item->productName,
+                'quantity'    => $item->quantity,
+                'price'       => $item->price,
+            ]);
+        }
+
+        return $order;
     }
 }
