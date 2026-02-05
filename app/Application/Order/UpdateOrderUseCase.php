@@ -6,6 +6,7 @@ use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use App\Domain\Order\Entities\Order;
 use App\Domain\Order\Entities\OrderItem;
 use App\Domain\Order\Enums\OrderStatus;
+use RuntimeException;
 
 final class UpdateOrderUseCase
 {
