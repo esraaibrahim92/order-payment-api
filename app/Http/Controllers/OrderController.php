@@ -6,6 +6,8 @@ use App\Application\Order\CreateOrderUseCase;
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateOrderRequest;
 use Illuminate\Http\JsonResponse;
+use App\Application\Order\UpdateOrderUseCase;
+use App\Http\Requests\UpdateOrderRequest;
 
 final class OrderController extends Controller
 {
@@ -23,5 +25,23 @@ final class OrderController extends Controller
             'total' => $order->total(),
             'status' => $order->status->value,
         ], 201);
+    }
+
+    public function update(
+        int $orderId,
+        UpdateOrderRequest $request,
+        UpdateOrderUseCase $useCase
+    ): JsonResponse {
+        $order = $useCase->execute(
+            $orderId,
+            $request->input('customer'),
+            $request->input('items')
+        );
+
+        return response()->json([
+            'message' => 'Order updated successfully',
+            'total'   => $order->total(),
+            'status'  => $order->status->value,
+        ]);
     }
 }

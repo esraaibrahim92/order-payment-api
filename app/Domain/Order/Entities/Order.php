@@ -23,8 +23,14 @@ final class Order
         );
     }
 
+    public function canBeUpdated(): bool
+    {
+        return $this->status === OrderStatus::PENDING;
+    }
+
     public function canBePaid(): bool
     {
         return $this->status === OrderStatus::CONFIRMED;
     }
+
 }
