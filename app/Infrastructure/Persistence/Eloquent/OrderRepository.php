@@ -29,23 +29,25 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function save(DomainOrder $order, array $customer): DomainOrder
     {
-        $model = Order::create([
-            'customer_name' => $customer['name'],
-            'customer_email' => $customer['email'],
-            'total' => $order->total(),
-            'status' => $order->status->value,
-        ]);
+        return DB::transaction(function () use ($order, $customer) {
 
-        foreach ($order->items as $item) {
-            OrderItem::create([
-                'order_id'    => $model->id,
-                'product_name'=> $item->productName,
-                'quantity'    => $item->quantity,
-                'price'       => $item->price,
+            $orderModel = Order::create([
+                'customer_name'  => $customer['name'],
+                'customer_email' => $customer['email'],
+                'total'          => $order->total(),
+                'status'         => $order->status->value,
             ]);
-        }
 
-        return $order;
+            foreach ($order->items as $item) {
+                $orderModel->items()->create([
+                    'product_name' => $item->productName,
+                    'quantity'     => $item->quantity,
+                    'price'        => $item->price,
+                ]);
+            }
+
+            return $order;
+        });
     }
 
     public function update(int $orderId, DomainOrder $order, array $customer): DomainOrder 
