@@ -5,7 +5,8 @@ use App\Domain\Order\Entities\Order as DomainOrder;
 use App\Domain\Order\Enums\OrderStatus;
 use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use App\Models\Order;
-use App\Models\OrderItem;
+use App\Domain\Order\Entities\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
