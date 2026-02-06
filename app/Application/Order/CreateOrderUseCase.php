@@ -18,17 +18,20 @@ final class CreateOrderUseCase
     {
         $orderItems = array_map(
             fn ($item) => new OrderItem(
-                $item['product_name'],
-                $item['quantity'],
-                (float) $item['price']
+                id: null, 
+                productName: $item['product_name'],
+                quantity: (int) $item['quantity'],
+                price: (float) $item['price']
             ),
             $items
         );
 
         $order = new Order(
+            id: null,
             items: $orderItems,
             status: OrderStatus::PENDING
         );
+
 
         return $this->orders->save($order, $customer);
     }

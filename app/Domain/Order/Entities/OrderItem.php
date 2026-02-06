@@ -5,6 +5,7 @@ namespace App\Domain\Order\Entities;
 final class OrderItem
 {
     public function __construct(
+        public ?int $id,
         public string $productName,
         public int $quantity,
         public float $price

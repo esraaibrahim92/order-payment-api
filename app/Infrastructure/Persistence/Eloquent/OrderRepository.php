@@ -16,6 +16,7 @@ final class OrderRepository implements OrderRepositoryInterface
         $orderModel = Order::with('items')->findOrFail($orderId);
         $items = $orderModel->items->map(
             fn ($item) => new OrderItem(
+                $item->id,
                 $item->product_name,
                 $item->quantity,
                 (float) $item->price
@@ -23,6 +24,7 @@ final class OrderRepository implements OrderRepositoryInterface
         )->toArray();
 
         return new DomainOrder(
+            id: $orderModel->id,
             items: $items,
             status: OrderStatus::from($orderModel->status)
         );
@@ -38,16 +40,29 @@ final class OrderRepository implements OrderRepositoryInterface
                 'total'          => $order->total(),
                 'status'         => $order->status->value,
             ]);
+            
+        $domainItems = [];
 
-            foreach ($order->items as $item) {
-                $orderModel->items()->create([
-                    'product_name' => $item->productName,
-                    'quantity'     => $item->quantity,
-                    'price'        => $item->price,
-                ]);
-            }
+        foreach ($order->items as $item) {
+            $itemModel = $orderModel->items()->create([
+                'product_name' => $item->productName,
+                'quantity'     => $item->quantity,
+                'price'        => $item->price,
+            ]);
 
-            return $order;
+            $domainItems[] = new OrderItem(
+                id: $itemModel->id,
+                productName: $item->productName,
+                quantity: $item->quantity,
+                price: $item->price
+            );
+        }
+
+        return new DomainOrder(
+            id: $orderModel->id,
+            items: $domainItems,
+            status: $order->status
+        );
         });
     }
 
@@ -89,5 +104,32 @@ final class OrderRepository implements OrderRepositoryInterface
         $order = Order::findOrFail($orderId);
         $order->items()->delete();
         $order->delete();
+    }
+
+    public function list(?string $status = null): array
+    {
+        $query = Order::with('items');
+
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+
+        return $query->get()->map(function ($orderModel) {
+
+            $items = $orderModel->items->map(
+                fn ($item) => new OrderItem(
+                    $item->id,
+                    $item->product_name,
+                    (int) $item->quantity,
+                    (float) $item->price
+                )
+            )->toArray();
+
+            return new DomainOrder(
+                id: $orderModel->id,
+                items: $items,
+                status: OrderStatus::from($orderModel->status)
+            );
+        })->toArray();
     }
 }

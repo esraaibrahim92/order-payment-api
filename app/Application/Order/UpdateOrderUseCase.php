@@ -28,6 +28,7 @@ final class UpdateOrderUseCase
 
         $orderItems = array_map(
             fn ($item) => new OrderItem(
+                null,
                 $item['product_name'],
                 $item['quantity'],
                 (float) $item['price']
@@ -36,6 +37,7 @@ final class UpdateOrderUseCase
         );
 
         $updatedOrder = new Order(
+            id: $orderId,
             items: $orderItems,
             status: OrderStatus::PENDING
         );
