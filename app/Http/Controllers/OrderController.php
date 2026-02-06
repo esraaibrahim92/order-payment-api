@@ -8,6 +8,7 @@ use App\Http\Requests\CreateOrderRequest;
 use Illuminate\Http\JsonResponse;
 use App\Application\Order\UpdateOrderUseCase;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Application\Order\DeleteOrderUseCase;
 
 final class OrderController extends Controller
 {
@@ -42,6 +43,17 @@ final class OrderController extends Controller
             'message' => 'Order updated successfully',
             'total'   => $order->total(),
             'status'  => $order->status->value,
+        ]);
+    }
+
+    public function destroy(
+        int $orderId,
+        DeleteOrderUseCase $useCase
+    ): JsonResponse {
+        $useCase->execute($orderId);
+
+        return response()->json([
+            'message' => 'Order deleted successfully'
         ]);
     }
 }

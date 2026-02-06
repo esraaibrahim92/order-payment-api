@@ -25,5 +25,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::post('orders', [OrderController::class, 'store']);
     Route::put('orders/{order}', [OrderController::class, 'update']);
+    Route::delete('orders/{order}', [OrderController::class, 'destroy']);
     Route::post('payments', [PaymentController::class, 'store']);
 });

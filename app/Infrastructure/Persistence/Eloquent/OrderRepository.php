@@ -7,6 +7,7 @@ use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use App\Models\Order;
 use App\Domain\Order\Entities\OrderItem;
 use Illuminate\Support\Facades\DB;
+use App\Models\Payment;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
@@ -76,5 +77,17 @@ final class OrderRepository implements OrderRepositoryInterface
 
             return $order;
         });
+    }
+
+    public function hasPayments(int $orderId): bool
+    {
+        return Payment::where('order_id', $orderId)->exists();
+    }
+
+    public function delete(int $orderId): void
+    {
+        $order = Order::findOrFail($orderId);
+        $order->items()->delete();
+        $order->delete();
     }
 }

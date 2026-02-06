@@ -28,6 +28,11 @@ final class Order
         return $this->status === OrderStatus::PENDING;
     }
 
+    public function canBeDeleted(bool $hasPayments): bool
+    {
+        return !$hasPayments;
+    }
+
     public function canBePaid(): bool
     {
         return $this->status === OrderStatus::CONFIRMED;
