@@ -73,14 +73,12 @@ class OrderRepository implements OrderRepositoryInterface
 
             $orderModel = Order::findOrFail($orderId);
 
-            // 1️⃣ Update order fields
             $orderModel->update([
                 'customer_name'  => $customer['name'],
                 'customer_email' => $customer['email'],
                 'total'          => $order->total(),
             ]);
 
-            // 2️⃣ Replace order items
             $orderModel->items()->delete();
 
             foreach ($order->items as $item) {
