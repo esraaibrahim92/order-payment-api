@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Domain\Order\Entities\OrderItem;
 use Illuminate\Support\Facades\DB;
 use App\Models\Payment;
+use App\Domain\Order\Entities\OrderItem as DomainOrderItem;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
@@ -40,7 +41,7 @@ final class OrderRepository implements OrderRepositoryInterface
                 'total'          => $order->total(),
                 'status'         => $order->status->value,
             ]);
-            
+
         $domainItems = [];
 
         foreach ($order->items as $item) {
@@ -106,30 +107,41 @@ final class OrderRepository implements OrderRepositoryInterface
         $order->delete();
     }
 
-    public function list(?string $status = null): array
+    public function paginate(?string $status, int $perPage): array
     {
         $query = Order::with('items');
 
-        if ($status !== null) {
+        if ($status) {
             $query->where('status', $status);
         }
 
-        return $query->get()->map(function ($orderModel) {
+        $paginator = $query->paginate($perPage);
 
-            $items = $orderModel->items->map(
-                fn ($item) => new OrderItem(
-                    $item->id,
-                    $item->product_name,
-                    (int) $item->quantity,
-                    (float) $item->price
-                )
-            )->toArray();
+        return [
+            'data' => $paginator->getCollection()->map(function ($order) {
+                $items = $order->items->map(
+                    fn ($item) => new DomainOrderItem(
+                        id: $item->id,
+                        productName: $item->product_name,
+                        quantity: (int) $item->quantity,
+                        price: (float) $item->price
+                    )
+                )->toArray();
 
-            return new DomainOrder(
-                id: $orderModel->id,
-                items: $items,
-                status: OrderStatus::from($orderModel->status)
-            );
-        })->toArray();
+                return new DomainOrder(
+                    id: $order->id,
+                    items: $items,
+                    status: OrderStatus::from($order->status)
+                );
+            })->toArray(),
+
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+                'last_page'    => $paginator->lastPage(),
+            ],
+        ];
     }
+
 }

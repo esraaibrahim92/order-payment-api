@@ -25,25 +25,40 @@ final class PaymentRepository implements PaymentRepositoryInterface
         );
     }
 
-    public function list(?int $orderId = null): array
-    {
-        return Payment::when(
-            $orderId,
-            fn ($q) => $q->where('order_id', $orderId)
-        )->get()->map(
-            fn ($payment) => new DomainPayment(
-                id: $payment->id,
-                orderId: $payment->order_id,
-                status: PaymentStatus::from($payment->status),
-                method: $payment->method
-            )
-        )->toArray();
-    }
-
     public function hasSuccessfulPayment(int $orderId): bool
     {
         return Payment::where('order_id', $orderId)
             ->where('status', PaymentStatus::SUCCESSFUL->value)
             ->exists();
     }
+
+    public function paginate(?int $orderId, int $perPage): array
+    {
+        $query = Payment::query();
+
+        if ($orderId) {
+            $query->where('order_id', $orderId);
+        }
+
+        $paginator = $query->paginate($perPage);
+
+        return [
+            'data' => $paginator->getCollection()->map(
+                fn ($p) => new DomainPayment(
+                    id: $p->id,
+                    orderId: $p->order_id,
+                    status: PaymentStatus::from($p->status),
+                    method: $p->method
+                )
+            )->toArray(),
+
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+                'last_page'    => $paginator->lastPage(),
+            ],
+        ];
+    }
+
 }

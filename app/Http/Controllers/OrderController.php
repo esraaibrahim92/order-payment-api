@@ -15,7 +15,8 @@ final class OrderController extends Controller
 {
     public function index(Request $request, ListOrdersUseCase $useCase): JsonResponse
     {
-        $orders = $useCase->execute($request->query('status'));
+        $orders = $useCase->execute($request->query('status'),(int) $request->query('per_page', 10));
+
 
         return response()->json([
             'data' => array_map(fn ($order) => [
@@ -23,12 +24,14 @@ final class OrderController extends Controller
                 'status' => $order->status->value,
                 'total'  => $order->total(),
                 'items'  => array_map(fn ($item) => [
-                     'id' => $item->id,
+                    'id'           => $item->id,
                     'product_name' => $item->productName,
                     'quantity'     => $item->quantity,
                     'price'        => $item->price,
                 ], $order->items),
-            ], $orders),
+            ], $orders['data']), 
+
+            'meta' => $orders['meta'],
         ]);
     }
 

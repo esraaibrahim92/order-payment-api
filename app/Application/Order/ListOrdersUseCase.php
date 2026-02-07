@@ -12,8 +12,8 @@ final class ListOrdersUseCase
     ) {
     }
 
-    public function execute(?string $status = null): array
+    public function execute(?string $status = null, int $perPage): array
     {
-        return $this->orders->list($status);
+        return $this->orders->paginate($status, $perPage);
     }
 }

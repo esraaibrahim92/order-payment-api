@@ -14,8 +14,8 @@ final class ListPaymentsUseCase
     /**
      * @return array
      */
-    public function execute(?int $orderId = null): array
+    public function execute(?int $orderId, int $perPage): array
     {
-        return $this->payments->list($orderId);
+        return $this->payments->paginate($orderId, $perPage);
     }
 }
