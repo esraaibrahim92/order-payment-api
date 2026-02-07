@@ -162,13 +162,5 @@ php artisan test --testsuite=Feature
 
 ---
 
-## ✅ Evaluation Criteria Compliance
-
-- RESTful API design ✅
-- JWT authentication ✅
-- Validation & error handling ✅
-- Clean code (PSR-12) ✅
-- Strategy pattern for payments ✅
-- Extensible gateways ✅
-- Pagination ✅
-- Unit & feature testing ✅
+## Postman Collection
+A Postman collection is included in the `/postman` directory to demonstrate and test all API endpoints.
