@@ -115,31 +115,96 @@ GET /api/orders/{id}/payments?page=1&per_page=5
 
 ## 🔌 Payment Gateway Extensibility
 
-The system uses the **Strategy Pattern**.
+The payment system is designed using the **Strategy Pattern combined with a Gateway Registry**, allowing new payment gateways to be added with **minimal code changes** and without modifying existing business logic.
 
-### Gateway Contract
+### Gateway Contract (Domain Layer)
+
+All payment gateways implement a common contract defined in the domain layer:
+
 ```php
 interface PaymentGatewayInterface
 {
+    public function method(): string;
     public function pay(Order $order): bool;
 }
 ```
 
-### Adding a New Gateway
-1. Create a class implementing the interface
-2. Bind it in the service container
-3. No changes needed in controllers or use cases
+Each gateway:
+- Defines the payment method it supports via `method()`
+- Encapsulates its own payment logic in `pay()`
 
-Example:
+---
+
+### Gateway Implementations (Infrastructure Layer)
+
+Example gateway implementations:
+
 ```php
-class ApplePayGateway implements PaymentGatewayInterface
+final class CreditCardGateway implements PaymentGatewayInterface
 {
+    public function method(): string
+    {
+        return 'credit_card';
+    }
+
     public function pay(Order $order): bool
     {
-        return true;
+        return true; // Simulated successful payment
     }
 }
 ```
+
+```php
+final class PaypalGateway implements PaymentGatewayInterface
+{
+    public function method(): string
+    {
+        return 'paypal';
+    }
+
+    public function pay(Order $order): bool
+    {
+        return false; // Simulated failed payment
+    }
+}
+```
+
+---
+
+### Gateway Registry (Application Layer)
+
+Gateways are registered in a centralized **PaymentGatewayRegistry**, which resolves the appropriate gateway at runtime based on the `payment_method` provided in the request.
+
+```php
+$gateway = $registry->get($paymentMethod);
+```
+
+If an unsupported payment method is provided, the registry fails fast and prevents invalid payments from being processed.
+
+---
+
+### Adding a New Payment Gateway
+
+To add a new payment gateway (for example, Apple Pay):
+
+1. Create a new class implementing `PaymentGatewayInterface`
+2. Implement the `method()` and `pay()` functions
+3. Register the new gateway in the service container
+
+```php
+$this->app->singleton(PaymentGatewayRegistry::class, function ($app) {
+    return new PaymentGatewayRegistry([
+        $app->make(CreditCardGateway::class),
+        $app->make(PaypalGateway::class),
+        $app->make(ApplePayGateway::class), // New gateway
+    ]);
+});
+```
+
+✅ No changes are required in:
+- Controllers  
+- Use cases  
+- Validation logic  
 
 ---
 
