@@ -11,7 +11,7 @@ use App\Http\Requests\UpdateOrderRequest;
 use App\Application\Order\DeleteOrderUseCase;
 use App\Application\Order\ListOrdersUseCase;
 
-final class OrderController extends Controller
+class OrderController extends Controller
 {
     public function index(Request $request, ListOrdersUseCase $useCase): JsonResponse
     {

@@ -5,7 +5,7 @@ namespace Tests\Feature\Order;
 use App\Models\User;
 use Tests\TestCase;
 
-final class ListOrdersTest extends TestCase
+class ListOrdersTest extends TestCase
 {
 
     public function test_orders_are_paginated(): void

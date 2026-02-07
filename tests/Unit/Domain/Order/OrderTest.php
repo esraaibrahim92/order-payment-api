@@ -7,7 +7,7 @@ use App\Domain\Order\Entities\OrderItem;
 use App\Domain\Order\Enums\OrderStatus;
 use PHPUnit\Framework\TestCase;
 
-final class OrderTest extends TestCase
+class OrderTest extends TestCase
 {
     public function test_it_calculates_order_total_correctly(): void
     {

@@ -6,16 +6,16 @@ use App\Domain\Order\Enums\OrderStatus;
 use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use App\Domain\Payment\Entities\Payment;
 use App\Domain\Payment\Enums\PaymentStatus;
-use App\Domain\Payment\Gateways\PaymentGatewayInterface;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use RuntimeException;
+use App\Application\Payment\Gateway\PaymentGatewayRegistry;
 
-final class ProcessPaymentUseCase
+class ProcessPaymentUseCase
 {
     public function __construct(
         private OrderRepositoryInterface $orders,
         private PaymentRepositoryInterface $payments,
-        private PaymentGatewayInterface $gateway
+        private PaymentGatewayRegistry $registry
     ) {
     }
 
@@ -35,7 +35,9 @@ final class ProcessPaymentUseCase
             );
         }
 
-        $success = $this->gateway->pay($order);
+        $gateway = $this->registry->get($method);
+
+        $success = $gateway->pay($order);
 
         $payment = new Payment(
             id: null,

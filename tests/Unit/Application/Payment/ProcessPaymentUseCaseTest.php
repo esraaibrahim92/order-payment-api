@@ -3,30 +3,35 @@
 namespace Tests\Unit\Application\Payment;
 
 use App\Application\Payment\ProcessPaymentUseCase;
+use App\Application\Payment\Gateway\PaymentGatewayRegistry;
+use App\Domain\Order\Entities\Order;
 use App\Domain\Order\Enums\OrderStatus;
 use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
-use App\Domain\Payment\Gateways\PaymentGatewayInterface;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-final class ProcessPaymentUseCaseTest extends TestCase
+class ProcessPaymentUseCaseTest extends TestCase
 {
     public function test_cannot_pay_unconfirmed_order(): void
     {
         $orders = $this->createMock(OrderRepositoryInterface::class);
         $payments = $this->createMock(PaymentRepositoryInterface::class);
-        $gateway = $this->createMock(PaymentGatewayInterface::class);
+        $registry = $this->createMock(PaymentGatewayRegistry::class); 
 
         $orders->method('find')->willReturn(
-            new \App\Domain\Order\Entities\Order(
+            new Order(
                 id: 1,
                 items: [],
                 status: OrderStatus::PENDING
             )
         );
 
-        $useCase = new ProcessPaymentUseCase($orders, $payments, $gateway);
+        $useCase = new ProcessPaymentUseCase(
+            $orders,
+            $payments,
+            $registry
+        );
 
         $this->expectException(RuntimeException::class);
 

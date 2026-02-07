@@ -7,7 +7,7 @@ use App\Domain\Order\Entities\Order;
 use App\Domain\Order\Entities\OrderItem;
 use App\Domain\Order\Enums\OrderStatus;
 
-final class CreateOrderUseCase
+class CreateOrderUseCase
 {
     public function __construct(
         private OrderRepositoryInterface $orders

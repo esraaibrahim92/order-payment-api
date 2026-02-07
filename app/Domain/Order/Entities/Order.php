@@ -3,7 +3,7 @@
 namespace App\Domain\Order\Entities;
 use App\Domain\Order\Enums\OrderStatus;
 
-final class Order
+class Order
 {
     /**
      * @param OrderItem[] $items

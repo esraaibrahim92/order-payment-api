@@ -7,7 +7,7 @@ use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Models\Payment;
 
-final class PaymentRepository implements PaymentRepositoryInterface
+class PaymentRepository implements PaymentRepositoryInterface
 {
     public function create(DomainPayment $payment): DomainPayment
     {

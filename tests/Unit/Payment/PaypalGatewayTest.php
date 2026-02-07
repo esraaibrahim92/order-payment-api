@@ -7,7 +7,7 @@ use App\Domain\Order\Enums\OrderStatus;
 use App\Infrastructure\PaymentGateways\PaypalGateway;
 use PHPUnit\Framework\TestCase;
 
-final class PaypalGatewayTest extends TestCase
+class PaypalGatewayTest extends TestCase
 {
     public function test_paypal_payment_fails(): void
     {

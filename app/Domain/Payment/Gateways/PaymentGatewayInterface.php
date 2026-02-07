@@ -5,5 +5,6 @@ use App\Domain\Order\Entities\Order;
 
 interface PaymentGatewayInterface
 {
+    public function method(): string;
     public function pay(Order $order): bool;
 }

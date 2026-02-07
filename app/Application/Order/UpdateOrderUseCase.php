@@ -8,7 +8,7 @@ use App\Domain\Order\Entities\OrderItem;
 use App\Domain\Order\Enums\OrderStatus;
 use RuntimeException;
 
-final class UpdateOrderUseCase
+class UpdateOrderUseCase
 {
     public function __construct(
         private OrderRepositoryInterface $orders

@@ -4,7 +4,7 @@ namespace App\Application\Payment;
 
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 
-final class ListPaymentsUseCase
+class ListPaymentsUseCase
 {
     public function __construct(
         private PaymentRepositoryInterface $payments

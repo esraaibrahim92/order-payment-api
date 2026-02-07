@@ -3,7 +3,7 @@
 namespace App\Domain\Payment\Entities;
 use App\Domain\Payment\Enums\PaymentStatus;
 
-final class Payment
+class Payment
 {
     /**
      * @param OrderItem[] $items

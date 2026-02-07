@@ -5,7 +5,7 @@ namespace App\Application\Order;
 use App\Domain\Order\Repositories\OrderRepositoryInterface;
 use RuntimeException;
 
-final class DeleteOrderUseCase
+class DeleteOrderUseCase
 {
     public function __construct(
         private OrderRepositoryInterface $orders

@@ -132,7 +132,7 @@ interface PaymentGatewayInterface
 
 Example:
 ```php
-final class ApplePayGateway implements PaymentGatewayInterface
+class ApplePayGateway implements PaymentGatewayInterface
 {
     public function pay(Order $order): bool
     {

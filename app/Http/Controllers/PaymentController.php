@@ -6,8 +6,9 @@ use App\Application\Payment\ProcessPaymentUseCase;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Application\Payment\ListPaymentsUseCase;
+use App\Application\Payment\Gateway\PaymentGatewayRegistry;
 
-final class PaymentController extends Controller
+class PaymentController extends Controller
 {
     public function index(Request $request, ListPaymentsUseCase $useCase): JsonResponse 
     {
@@ -39,18 +40,26 @@ final class PaymentController extends Controller
         ]);
     }
 
-    public function store(Request $request, ProcessPaymentUseCase $useCase): JsonResponse 
+    public function store(Request $request, ProcessPaymentUseCase $useCase, PaymentGatewayRegistry $registry): JsonResponse 
     {
+        $request->validate([
+            'order_id' => ['required', 'integer', 'exists:orders,id'],
+            'payment_method' => ['required', 'string'],
+        ]);
+
+        if (! in_array($request->payment_method, $registry->supportedMethods(), true)) {
+            return response()->json([
+                'message' => 'Unsupported payment method'
+            ], 422);
+        }
+
         $payment = $useCase->execute(
             $request->order_id,
             $request->payment_method
         );
 
         return response()->json([
-            'id'       => $payment->id,
-            'order_id' => $payment->orderId,
-            'status'   => $payment->status->value,
-            'method'   => $payment->method,
+            'status' => $payment->status->value,
         ], 201);
     }
 }

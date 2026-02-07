@@ -2,7 +2,7 @@
 
 namespace App\Domain\Order\Entities;
 
-final class OrderItem
+class OrderItem
 {
     public function __construct(
         public ?int $id,

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Payment;
 use App\Domain\Order\Entities\OrderItem as DomainOrderItem;
 
-final class OrderRepository implements OrderRepositoryInterface
+class OrderRepository implements OrderRepositoryInterface
 {
     public function find(int $orderId): DomainOrder
     {

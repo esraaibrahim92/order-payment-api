@@ -9,6 +9,8 @@ use App\Infrastructure\PaymentGateways\CreditCardGateway;
 use App\Infrastructure\Persistence\Eloquent\OrderRepository;
 use App\Domain\Payment\Repositories\PaymentRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\PaymentRepository;
+use App\Infrastructure\PaymentGateways\PaypalGateway;
+use App\Application\Payment\Gateway\PaymentGatewayRegistry;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,10 +29,13 @@ class AppServiceProvider extends ServiceProvider
             PaymentRepository::class
         );
 
-        $this->app->bind(
-            PaymentGatewayInterface::class,
-            CreditCardGateway::class
-        );
+        $this->app->singleton(PaymentGatewayRegistry::class, function ($app) {
+            return new PaymentGatewayRegistry([
+                $app->make(CreditCardGateway::class),
+                $app->make(PaypalGateway::class),
+                // add new gateways here
+            ]);
+        });
     }
 
     /**

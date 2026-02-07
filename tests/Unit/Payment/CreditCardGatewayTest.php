@@ -7,7 +7,7 @@ use App\Domain\Order\Enums\OrderStatus;
 use App\Infrastructure\PaymentGateways\CreditCardGateway;
 use PHPUnit\Framework\TestCase;
 
-final class CreditCardGatewayTest extends TestCase
+class CreditCardGatewayTest extends TestCase
 {
     public function test_credit_card_payment_succeeds(): void
     {
