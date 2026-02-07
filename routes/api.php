@@ -28,4 +28,6 @@ Route::middleware('auth:api')->group(function () {
     Route::put('orders/{order}', [OrderController::class, 'update']);
     Route::delete('orders/{order}', [OrderController::class, 'destroy']);
     Route::post('payments', [PaymentController::class, 'store']);
+    Route::get('payments', [PaymentController::class, 'index']);
+    Route::get('orders/{order}/payments', [PaymentController::class, 'orderPayments']);
 });
