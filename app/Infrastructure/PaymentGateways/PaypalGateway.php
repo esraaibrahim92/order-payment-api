@@ -9,6 +9,6 @@ final class PaypalGateway implements PaymentGatewayInterface
 {
     public function pay(Order $order): bool
     {
-        return true; // simulate success
+        return false; // simulate failure
     }
 }
