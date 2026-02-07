@@ -29,16 +29,23 @@ final class CreateOrderTest extends TestCase
                     'quantity' => 1,
                     'price' => 1000,
                 ],
+                [
+                    'product_name' => 'Mouse',
+                    'quantity' => 1,
+                    'price' => 60,
+                ],
             ],
         ]);
 
         $response
             ->assertStatus(201)
             ->assertJsonStructure([
-                'id',
-                'status',
+                'message',
                 'total',
-                'items',
+                'status',
+            ])
+            ->assertJson([
+                'status' => 'pending',
             ]);
     }
 }
